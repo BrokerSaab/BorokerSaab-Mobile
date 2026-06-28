@@ -1,0 +1,39 @@
+{
+  "summary": "BrokerSaab backend and frontend smoke tested. Found and FIXED 1 critical bug in /api/auth/register/complete (await on uncalled function). After fix, all 20 backend pytest cases pass covering categories, advisors, OTP auth (client + advisor signup), bookings, end-to-end quote->ticket->stages->close flow with 15% commission payout, and wallet. Frontend smoke test (client OTP login -> Discover) succeeds; dev OTP visible in UI; welcome ₹500 credited; authorized dealers shown first with badge. Minor React Native web deprecation console warnings ('shadow*' and 'props.pointerEvents' deprecated) observed.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/auth/register/complete", "issue": "Originally crashed with 500 due to bare 'await adjust_wallet' (function object, not coroutine) on line 249. FIXED by removing the no-op line. RCA: typo/leftover scaffolding."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {"component": "global styles", "issue": "Console warning: '\"shadow*\" style props are deprecated. Use \"boxShadow\".' Will break on future RN versions. Reference: search shadowColor/shadowOffset/shadowOpacity/shadowRadius in /app/frontend/app/**.tsx."},
+      {"component": "Pressable/View", "issue": "Console warning: 'props.pointerEvents is deprecated. Use style.pointerEvents'. Some component (likely auth.tsx or layout) passes pointerEvents as prop instead of via style."}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/test_brokersaab_api.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "(Optional) Migrate React Native shadow* style props to boxShadow and move pointerEvents from props to style to silence deprecation warnings.",
+    "(Optional) Increase JWT_SECRET to >=32 bytes — pyjwt emits InsecureKeyLengthWarning for 21-byte secret.",
+    "Consider strengthening OTP rate-limit / expiry; currently OTP record has created_at but no expiry check on /auth/otp/verify."
+  ],
+  "critical_code_review_comments": [
+    "server.py line 249 had 'await adjust_wallet' (function reference, not call) — caused 500 on EVERY new client registration. Fixed by removing.",
+    "JWT_SECRET hardcoded ('brokersaab-dev-secret') and only 21 bytes; should come from env and be at least 32 bytes for HS256.",
+    "register_complete returns 'is_new=True' user JSON without re-fetching from DB if user already exists path is fine, but no idempotency guard around duplicate phone+role race.",
+    "OTP /verify does not check OTP expiration window (created_at unused).",
+    "advisor_signup auto-approves (status=APPROVED) intentionally per MVP — acceptable but logged here.",
+    "All endpoints correctly strip MongoDB _id via PROJ = {'_id': 0}. Good."
+  ],
+  "updated_files": ["/app/backend/server.py", "/app/backend/tests/test_brokersaab_api.py"],
+  "success_rate": {"backend": "100% (20/20 pytest)", "frontend": "100% smoke (auth->OTP->register->Discover)"},
+  "seed_data_creation": "Auto-seeded via server startup: 19 categories, 8 demo advisors. Tests create TEST_ prefixed transient client (phone 9999999999) and advisor (phone 9888888880).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Tests are idempotent for advisor_signup only on a fresh DB (TEST advisor phone 9888888880). If re-running on same DB, advisor_signup will be skipped (pytest.skip) — to fully re-run, clean test data with the snippet inside /app/backend/tests or drop users where phone in [9999999999,9888888880].",
+  "rca_of_issue": "Bug: /api/auth/register/complete returned HTTP 500. Reproduction: POST {phone:'9999999999',role:'client',full_name:'X'} after OTP verify. Root cause: server.py line 249 had `await adjust_wallet` (referencing the function object itself, not invoking it) — Python's await requires an awaitable, so raised TypeError. Mitigation: removed the dead line. All downstream client-auth dependent tests then pass."
+}
