@@ -144,6 +144,29 @@ class WalletAddIn(BaseModel):
     amount: float
 
 
+class SetPasswordIn(BaseModel):
+    password: str
+
+
+class PhonePasswordLoginIn(BaseModel):
+    phone: str
+    password: str
+    role: Literal["client", "advisor"] = "client"
+
+
+class ProfileUpdateIn(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+
+
+class AvatarUploadIn(BaseModel):
+    image_base64: str  # data URI or raw base64
+
+
+class BuyPackIn(BaseModel):
+    pack_id: str
+
+
 # ---------- Helpers ----------
 PROJ = {"_id": 0}
 
@@ -306,6 +329,53 @@ async def advisor_signup(data: AdvisorOnboardingIn):
 @api.get("/auth/me")
 async def me(user=Depends(get_user)):
     return public_user(user)
+
+
+@api.post("/auth/password/set")
+async def set_password(data: SetPasswordIn, user=Depends(get_user)):
+    pw = data.password
+    if len(pw) < 8 or not any(c.isupper() for c in pw) or not any(c.islower() for c in pw) or not any(c.isdigit() for c in pw):
+        raise HTTPException(400, "Password must be 8+ chars with uppercase, lowercase and digit")
+    import bcrypt
+    hashed = bcrypt.hashpw(pw.encode(), bcrypt.gensalt()).decode()
+    await db.users.update_one({"id": user["id"]}, {"$set": {"password_hash": hashed}})
+    return {"ok": True}
+
+
+@api.post("/auth/login/phone-password")
+async def phone_password_login(data: PhonePasswordLoginIn):
+    user = await db.users.find_one({"phone": data.phone, "role": data.role}, PROJ)
+    if not user or not user.get("password_hash"):
+        raise HTTPException(400, "Invalid credentials")
+    import bcrypt
+    if not bcrypt.checkpw(data.password.encode(), user["password_hash"].encode()):
+        raise HTTPException(400, "Invalid credentials")
+    token = make_token(user["id"], user["role"])
+    return {"token": token, "user": public_user(user)}
+
+
+@api.patch("/users/me/profile")
+async def update_profile(data: ProfileUpdateIn, user=Depends(get_user)):
+    update = {}
+    if data.full_name is not None and len(data.full_name.strip()) >= 2:
+        update["full_name"] = data.full_name.strip()
+    if data.email is not None:
+        update["email"] = data.email.strip()
+    if update:
+        await db.users.update_one({"id": user["id"]}, {"$set": update})
+    refreshed = await db.users.find_one({"id": user["id"]}, PROJ)
+    return public_user(refreshed)
+
+
+@api.post("/users/upload/avatar")
+async def upload_avatar(data: AvatarUploadIn, user=Depends(get_user)):
+    raw = data.image_base64
+    if not raw.startswith("data:image/"):
+        raw = f"data:image/jpeg;base64,{raw}"
+    if len(raw) > 2_500_000:
+        raise HTTPException(400, "Avatar too large (max ~1.8MB)")
+    await db.users.update_one({"id": user["id"]}, {"$set": {"avatar_url": raw}})
+    return {"avatar_url": raw}
 
 
 # ---------- Categories ----------
@@ -632,6 +702,108 @@ async def wallet_add(data: WalletAddIn, user=Depends(get_user)):
     await adjust_wallet(user["id"], data.amount, "CREDIT", "topup", "Wallet top-up (Razorpay - mocked)")
     refreshed = await db.users.find_one({"id": user["id"]}, PROJ)
     return {"balance": refreshed.get("wallet_balance", 0)}
+
+
+# ---------- Contact Packs & Unlocks ----------
+PACKS = [
+    {"id": "pack_5", "name": "Starter", "credits": 5, "price": 99, "validity_days": 365},
+    {"id": "pack_20", "name": "Growth", "credits": 20, "price": 299, "validity_days": 365, "popular": True},
+    {"id": "pack_50", "name": "Pro", "credits": 50, "price": 599, "validity_days": 365},
+    {"id": "pack_100", "name": "Enterprise", "credits": 100, "price": 999, "validity_days": 365},
+]
+
+
+@api.get("/packs")
+async def list_packs():
+    return PACKS
+
+
+@api.post("/packs/buy")
+async def buy_pack(data: BuyPackIn, user=Depends(get_user)):
+    if user["role"] != "client":
+        raise HTTPException(403, "Clients only")
+    pack = next((p for p in PACKS if p["id"] == data.pack_id), None)
+    if not pack:
+        raise HTTPException(404, "Pack not found")
+    sub_id = new_id()
+    expires_at = (datetime.now(timezone.utc) + timedelta(days=pack["validity_days"])).isoformat()
+    record = {
+        "id": sub_id,
+        "user_id": user["id"],
+        "pack_id": pack["id"],
+        "pack_name": pack["name"],
+        "credits_total": pack["credits"],
+        "credits_used": 0,
+        "credits_remaining": pack["credits"],
+        "price": pack["price"],
+        "expires_at": expires_at,
+        "status": "ACTIVE",
+        "created_at": now_iso(),
+    }
+    await db.contact_subscriptions.insert_one(record)
+    await db.wallet_transactions.insert_one({
+        "id": new_id(), "user_id": user["id"], "amount": -pack["price"],
+        "type": "DEBIT", "ref": sub_id, "description": f"{pack['name']} pack purchase",
+        "status": "SUCCESS", "created_at": now_iso(),
+    })
+    return {k: v for k, v in record.items() if k != "_id"}
+
+
+@api.get("/contact-subscriptions/me")
+async def my_subscriptions(user=Depends(get_user)):
+    cur = db.contact_subscriptions.find({"user_id": user["id"]}, PROJ).sort("created_at", -1)
+    subs = await cur.to_list(50)
+    # Compute total credits available
+    now = datetime.now(timezone.utc).isoformat()
+    available = sum(s["credits_remaining"] for s in subs if s["status"] == "ACTIVE" and s["expires_at"] > now and s["credits_remaining"] > 0)
+    return {"subscriptions": subs, "credits_available": available}
+
+
+@api.post("/advisors/{advisor_id}/unlock")
+async def unlock_advisor(advisor_id: str, user=Depends(get_user)):
+    if user["role"] != "client":
+        raise HTTPException(403, "Clients only")
+    advisor = await db.users.find_one({"id": advisor_id, "role": "advisor"}, PROJ)
+    if not advisor:
+        raise HTTPException(404, "Advisor not found")
+    # Already unlocked?
+    existing = await db.contact_unlocks.find_one({"client_id": user["id"], "advisor_id": advisor_id}, PROJ)
+    if existing:
+        return {"already_unlocked": True, "phone": advisor["phone"], "email": advisor.get("email", "")}
+    # First-time unlock free
+    first_time = (await db.contact_unlocks.count_documents({"client_id": user["id"]})) == 0
+    used_sub_id = None
+    if not first_time:
+        # Find an active pack with credits
+        now = datetime.now(timezone.utc).isoformat()
+        sub = await db.contact_subscriptions.find_one(
+            {"user_id": user["id"], "status": "ACTIVE", "expires_at": {"$gt": now}, "credits_remaining": {"$gt": 0}},
+            PROJ,
+        )
+        if not sub:
+            raise HTTPException(400, "No credits available. Please purchase a pack.")
+        await db.contact_subscriptions.update_one(
+            {"id": sub["id"]},
+            {"$inc": {"credits_used": 1, "credits_remaining": -1}},
+        )
+        used_sub_id = sub["id"]
+    unlock = {
+        "id": new_id(),
+        "client_id": user["id"],
+        "advisor_id": advisor_id,
+        "advisor_name": advisor["full_name"],
+        "is_free": first_time,
+        "subscription_id": used_sub_id,
+        "created_at": now_iso(),
+    }
+    await db.contact_unlocks.insert_one(unlock)
+    return {"already_unlocked": False, "is_free": first_time, "phone": advisor["phone"], "email": advisor.get("email", "")}
+
+
+@api.get("/contact-unlocks/me")
+async def my_unlocks(user=Depends(get_user)):
+    cur = db.contact_unlocks.find({"client_id": user["id"]}, PROJ).sort("created_at", -1)
+    return await cur.to_list(100)
 
 
 # ---------- Seed ----------

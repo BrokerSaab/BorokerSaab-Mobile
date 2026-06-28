@@ -17,8 +17,24 @@ export default function AdvisorDetail() {
   const [advisor, setAdvisor] = useState<any>(null);
   const [bookOpen, setBookOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const [unlockInfo, setUnlockInfo] = useState<any>(null);
+  const [unlocking, setUnlocking] = useState(false);
 
   useEffect(() => { api.get(`/advisors/${id}`).then(setAdvisor); }, [id]);
+
+  const unlockContact = async () => {
+    setUnlocking(true);
+    try {
+      const r = await api.post(`/advisors/${id}/unlock`, {});
+      setUnlockInfo(r);
+    } catch (e: any) {
+      Alert.alert('Cannot unlock', e.message, [
+        { text: 'Cancel' },
+        { text: 'Buy Credits', onPress: () => router.push('/buy-pack') },
+      ]);
+    }
+    setUnlocking(false);
+  };
 
   if (!advisor) return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator color={colors.brand} /></View>;
 
@@ -78,6 +94,26 @@ export default function AdvisorDetail() {
               </View>
             ))}
           </View>
+
+          <SectionHead icon="key" title="Contact Details" />
+          {unlockInfo ? (
+            <View style={styles.unlockCard}>
+              <Ionicons name="lock-open" size={20} color={colors.success} />
+              <View style={{ flex: 1, marginLeft: 10 }}>
+                <Text style={styles.unlockPhone}>📞 +91 {unlockInfo.phone}</Text>
+                {!!advisor.business_name && <Text style={styles.unlockMeta}>{unlockInfo.is_free ? '🎁 Free first unlock' : '✓ Unlocked with 1 credit'}</Text>}
+              </View>
+            </View>
+          ) : (
+            <Pressable testID="unlock-contact-btn" onPress={unlockContact} disabled={unlocking} style={styles.unlockBtn}>
+              {unlocking ? <ActivityIndicator color="#fff" /> : (
+                <>
+                  <Ionicons name="lock-closed" size={16} color="#fff" />
+                  <Text style={styles.unlockBtnText}>Unlock Contact (1 credit / FREE first time)</Text>
+                </>
+              )}
+            </Pressable>
+          )}
         </View>
       </ScrollView>
 
@@ -245,6 +281,11 @@ const styles = StyleSheet.create({
   slot: { backgroundColor: colors.surfaceSecondary, paddingHorizontal: 12, paddingVertical: 8, borderRadius: radius.md, minWidth: 90 },
   slotDay: { fontSize: 10, color: colors.textMuted, fontWeight: '700', letterSpacing: 0.5 },
   slotTime: { fontSize: 12, color: colors.onSurface, fontWeight: '600', marginTop: 2 },
+  unlockBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: colors.brandIndigo, paddingVertical: 12, borderRadius: radius.md, marginTop: 6 },
+  unlockBtnText: { color: '#fff', fontWeight: '700', fontSize: 13 },
+  unlockCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.brandSecondaryLight, padding: 14, borderRadius: radius.md, borderWidth: 1, borderColor: colors.success, marginTop: 6 },
+  unlockPhone: { fontSize: 16, fontWeight: '700', color: colors.onSurface },
+  unlockMeta: { fontSize: 11, color: colors.textMuted, marginTop: 2 },
   bottomBar: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.divider, padding: spacing.md, paddingBottom: 24, flexDirection: 'row', gap: 8 },
   actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: radius.md },
   modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },

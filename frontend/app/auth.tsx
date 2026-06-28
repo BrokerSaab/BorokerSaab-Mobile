@@ -8,16 +8,18 @@ import { api } from '@/src/api';
 import { useAuth } from '@/src/auth';
 import { colors, radius, spacing } from '@/src/theme';
 
-type Step = 'role' | 'phone' | 'otp' | 'register';
+type Step = 'role' | 'method' | 'phone' | 'otp' | 'pw' | 'register';
 
 export default function Auth() {
   const router = useRouter();
   const { signIn } = useAuth();
   const [step, setStep] = useState<Step>('role');
   const [role, setRole] = useState<'client' | 'advisor'>('client');
+  const [method, setMethod] = useState<'otp' | 'password'>('otp');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [devOtp, setDevOtp] = useState('');
+  const [pw, setPw] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,9 +33,25 @@ export default function Auth() {
     }
     setLoading(true);
     try {
-      const r = await api.post('/auth/otp/send', { phone, role });
-      setDevOtp(r.dev_otp || '');
-      setStep('otp');
+      if (method === 'password') {
+        setStep('pw');
+      } else {
+        const r = await api.post('/auth/otp/send', { phone, role });
+        setDevOtp(r.dev_otp || '');
+        setStep('otp');
+      }
+    } catch (e: any) { setErr(e.message); }
+    setLoading(false);
+  };
+
+  const loginWithPassword = async () => {
+    setErr('');
+    if (pw.length < 8) { setErr('Enter your password'); return; }
+    setLoading(true);
+    try {
+      const r = await api.post('/auth/login/phone-password', { phone, password: pw, role });
+      await signIn(r.token, r.user);
+      router.replace('/');
     } catch (e: any) { setErr(e.message); }
     setLoading(false);
   };
@@ -103,7 +121,30 @@ export default function Auth() {
                       <Text style={styles.roleSub}>Manage bookings & service tickets</Text>
                     </View>
                   </Pressable>
-                  <Pressable testID="role-continue-btn" style={styles.primaryBtn} onPress={() => setStep('phone')}>
+                  <Pressable testID="role-continue-btn" style={styles.primaryBtn} onPress={() => setStep('method')}>
+                    <Text style={styles.primaryBtnText}>Continue</Text>
+                  </Pressable>
+                </>
+              )}
+              {step === 'method' && (
+                <>
+                  <Text style={styles.title}>How would you like to sign in?</Text>
+                  <Text style={styles.sub}>You can switch any time</Text>
+                  <Pressable testID="method-otp" style={[styles.roleBtn, method === 'otp' && styles.roleSel]} onPress={() => setMethod('otp')}>
+                    <Ionicons name="phone-portrait" size={20} color={method === 'otp' ? colors.brandSecondary : '#fff'} />
+                    <View style={{ marginLeft: spacing.md, flex: 1 }}>
+                      <Text style={styles.roleTitle}>OTP Login</Text>
+                      <Text style={styles.roleSub}>Get a one-time code on your phone</Text>
+                    </View>
+                  </Pressable>
+                  <Pressable testID="method-pw" style={[styles.roleBtn, method === 'password' && styles.roleSel]} onPress={() => setMethod('password')}>
+                    <Ionicons name="lock-closed" size={20} color={method === 'password' ? colors.brandSecondary : '#fff'} />
+                    <View style={{ marginLeft: spacing.md, flex: 1 }}>
+                      <Text style={styles.roleTitle}>Password Login</Text>
+                      <Text style={styles.roleSub}>If you've set a password before</Text>
+                    </View>
+                  </Pressable>
+                  <Pressable testID="method-continue" style={styles.primaryBtn} onPress={() => setStep('phone')}>
                     <Text style={styles.primaryBtnText}>Continue</Text>
                   </Pressable>
                 </>
@@ -153,6 +194,26 @@ export default function Auth() {
                     {loading ? <ActivityIndicator color={colors.brand} /> : <Text style={styles.primaryBtnText}>Verify</Text>}
                   </Pressable>
                   <Pressable onPress={() => setStep('phone')}><Text style={styles.linkText}>Change number</Text></Pressable>
+                </>
+              )}
+              {step === 'pw' && (
+                <>
+                  <Text style={styles.title}>Enter your password</Text>
+                  <Text style={styles.sub}>For +91 {phone}</Text>
+                  <TextInput
+                    testID="pw-input"
+                    value={pw}
+                    onChangeText={setPw}
+                    placeholder="Password"
+                    placeholderTextColor="#7d8693"
+                    secureTextEntry
+                    style={[styles.input, styles.fullInput]}
+                  />
+                  {err ? <Text style={styles.err}>{err}</Text> : null}
+                  <Pressable testID="pw-login-btn" style={styles.primaryBtn} onPress={loginWithPassword} disabled={loading}>
+                    {loading ? <ActivityIndicator color={colors.brand} /> : <Text style={styles.primaryBtnText}>Sign In</Text>}
+                  </Pressable>
+                  <Pressable onPress={() => { setMethod('otp'); setStep('phone'); }}><Text style={styles.linkText}>Use OTP instead</Text></Pressable>
                 </>
               )}
               {step === 'register' && (
