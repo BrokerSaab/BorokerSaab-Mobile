@@ -1,0 +1,245 @@
+// Sub-modules per category (matches reference site frontend-tellar.vercel.app structure)
+export type SubModule = { name: string; nameHi: string; keywords: string[] };
+
+export const SUB_MODULES: Record<string, SubModule[]> = {
+  m1: [
+    { name: 'Birth Certificate', nameHi: 'जन्म प्रमाणपत्र', keywords: ['Birth', 'Janam', 'New Born'] },
+    { name: 'Death Certificate', nameHi: 'मृत्यु प्रमाणपत्र', keywords: ['Death', 'Mrityu'] },
+    { name: 'Marriage Registration', nameHi: 'विवाह पंजीकरण', keywords: ['Marriage', 'Shaadi', 'Vivah'] },
+    { name: 'Divorce Decree', nameHi: 'तलाक डिक्री', keywords: ['Divorce', 'Talaq'] },
+  ],
+  m2: [
+    { name: 'Aadhaar Update', nameHi: 'आधार अपडेट', keywords: ['Aadhaar', 'UIDAI', 'Address Change'] },
+    { name: 'PAN Card', nameHi: 'पैन कार्ड', keywords: ['PAN', 'Income Tax', 'Tan'] },
+    { name: 'Voter ID', nameHi: 'वोटर आईडी', keywords: ['Voter', 'EPIC', 'Election'] },
+    { name: 'Ration Card', nameHi: 'राशन कार्ड', keywords: ['Ration', 'PDS', 'BPL'] },
+  ],
+  m3: [
+    { name: 'Income Certificate', nameHi: 'आय प्रमाणपत्र', keywords: ['Income', 'Aay'] },
+    { name: 'Caste Certificate', nameHi: 'जाति प्रमाणपत्र', keywords: ['Caste', 'SC', 'ST', 'OBC'] },
+    { name: 'Residence Certificate', nameHi: 'निवास प्रमाणपत्र', keywords: ['Residence', 'Domicile'] },
+    { name: 'Legal Heir Certificate', nameHi: 'विधिक उत्तराधिकारी', keywords: ['Legal Heir', 'Succession'] },
+  ],
+  m4: [
+    { name: 'Sale Deed', nameHi: 'विक्रय विलेख', keywords: ['Sale Deed', 'Registry', 'Bainama'] },
+    { name: 'Property Mutation', nameHi: 'दाखिल खारिज', keywords: ['Mutation', 'Dakhil Kharij'] },
+    { name: 'Land Records', nameHi: 'भूलेख', keywords: ['Bhulekh', 'Khasra', 'Khatauni'] },
+    { name: 'Title Search', nameHi: 'शीर्षक खोज', keywords: ['Title', 'Due Diligence'] },
+  ],
+  m5: [
+    { name: 'GST Filing', nameHi: 'जीएसटी फाइलिंग', keywords: ['GST', 'GSTR', 'Return'] },
+    { name: 'ITR Filing', nameHi: 'आईटीआर फाइलिंग', keywords: ['ITR', 'Income Tax', 'TDS'] },
+    { name: 'Tax Planning', nameHi: 'कर योजना', keywords: ['Tax Saving', '80C'] },
+    { name: 'Professional Tax', nameHi: 'व्यवसाय कर', keywords: ['PT', 'Professional Tax'] },
+  ],
+  m6: [
+    { name: 'Pvt Ltd Registration', nameHi: 'प्राइवेट लिमिटेड', keywords: ['Pvt Ltd', 'Company', 'ROC'] },
+    { name: 'LLP Registration', nameHi: 'एलएलपी पंजीकरण', keywords: ['LLP', 'Partnership'] },
+    { name: 'FSSAI License', nameHi: 'एफएसएसएआई', keywords: ['FSSAI', 'Food License'] },
+    { name: 'MSME / Udyam', nameHi: 'एमएसएमई', keywords: ['MSME', 'Udyam', 'SSI'] },
+  ],
+  m7: [
+    { name: 'Trademark', nameHi: 'ट्रेडमार्क', keywords: ['Trademark', 'TM', 'Brand'] },
+    { name: 'Patent', nameHi: 'पेटेंट', keywords: ['Patent', 'Invention'] },
+    { name: 'Copyright', nameHi: 'कॉपीराइट', keywords: ['Copyright', '©'] },
+    { name: 'Design Registration', nameHi: 'डिज़ाइन पंजीकरण', keywords: ['Design'] },
+  ],
+  m8: [
+    { name: 'Home Loan', nameHi: 'गृह ऋण', keywords: ['Home Loan', 'Housing'] },
+    { name: 'Business Loan', nameHi: 'व्यवसाय ऋण', keywords: ['Business Loan', 'MSME Loan'] },
+    { name: 'Credit Card', nameHi: 'क्रेडिट कार्ड', keywords: ['Credit Card'] },
+    { name: 'CIBIL Report', nameHi: 'सिबिल रिपोर्ट', keywords: ['CIBIL', 'Credit Score'] },
+  ],
+  m9: [
+    { name: 'Term Life Plan', nameHi: 'टर्म जीवन', keywords: ['Term', 'Life Insurance'] },
+    { name: 'Health Insurance', nameHi: 'स्वास्थ्य बीमा', keywords: ['Health', 'Mediclaim'] },
+    { name: 'Motor Insurance', nameHi: 'मोटर बीमा', keywords: ['Car', 'Bike', 'Vehicle'] },
+    { name: 'Crop / PMFBY', nameHi: 'फसल बीमा', keywords: ['Crop', 'PMFBY', 'Farmer'] },
+  ],
+  m10: [
+    { name: 'DL Renewal', nameHi: 'डीएल नवीनीकरण', keywords: ['DL', 'Driving License'] },
+    { name: 'Vehicle Transfer', nameHi: 'वाहन हस्तांतरण', keywords: ['Transfer', 'Ownership'] },
+    { name: 'RC Duplicate', nameHi: 'आरसी डुप्लीकेट', keywords: ['RC', 'Registration'] },
+    { name: 'PUC Certificate', nameHi: 'पीयूसी', keywords: ['PUC', 'Pollution'] },
+  ],
+  m11: [
+    { name: 'Notary / Affidavit', nameHi: 'नोटरी / हलफनामा', keywords: ['Notary', 'Affidavit'] },
+    { name: 'Civil Litigation', nameHi: 'सिविल मुकदमा', keywords: ['Civil', 'Property Dispute'] },
+    { name: 'Criminal Defence', nameHi: 'आपराधिक बचाव', keywords: ['Criminal', 'Bail'] },
+    { name: 'Cheque Bounce', nameHi: 'चेक बाउंस', keywords: ['Cheque Bounce', '138'] },
+  ],
+  m12: [
+    { name: 'PF Withdrawal', nameHi: 'पीएफ निकासी', keywords: ['PF', 'EPF'] },
+    { name: 'ESI Registration', nameHi: 'ईएसआई पंजीकरण', keywords: ['ESI', 'ESIC'] },
+    { name: 'Labour Card', nameHi: 'लेबर कार्ड', keywords: ['Labour Card', 'Shramik'] },
+    { name: 'Gratuity Claim', nameHi: 'ग्रेच्युटी', keywords: ['Gratuity'] },
+  ],
+  m13: [
+    { name: 'Migration Certificate', nameHi: 'माइग्रेशन सर्टिफिकेट', keywords: ['Migration'] },
+    { name: 'Transfer Certificate', nameHi: 'टीसी', keywords: ['TC', 'School Transfer'] },
+    { name: 'Degree Attestation', nameHi: 'डिग्री सत्यापन', keywords: ['Attestation', 'WES'] },
+    { name: 'Bonafide', nameHi: 'बोनाफाइड', keywords: ['Bonafide'] },
+  ],
+  m14: [
+    { name: 'Old Age Pension', nameHi: 'वृद्धा पेंशन', keywords: ['Pension', 'Vridha'] },
+    { name: 'Widow Pension', nameHi: 'विधवा पेंशन', keywords: ['Widow'] },
+    { name: 'Ayushman Bharat', nameHi: 'आयुष्मान भारत', keywords: ['Ayushman', 'PMJAY'] },
+    { name: 'PM-KISAN', nameHi: 'पीएम किसान', keywords: ['PM Kisan', '6000'] },
+  ],
+  m15: [
+    { name: 'Mutual Funds', nameHi: 'म्युचुअल फंड', keywords: ['MF', 'SIP'] },
+    { name: 'Demat Account', nameHi: 'डीमैट खाता', keywords: ['Demat', 'Stocks'] },
+    { name: 'NPS', nameHi: 'एनपीएस', keywords: ['NPS', 'Retirement'] },
+    { name: 'Will & Estate', nameHi: 'वसीयत', keywords: ['Will', 'Vaseeyat'] },
+  ],
+  m16: [
+    { name: 'New Passport', nameHi: 'नया पासपोर्ट', keywords: ['Passport', 'Tatkal'] },
+    { name: 'Visa Consulting', nameHi: 'वीज़ा सलाह', keywords: ['Visa', 'Tourist'] },
+    { name: 'Apostille', nameHi: 'अपोस्टिल', keywords: ['Apostille', 'MEA'] },
+    { name: 'PCC', nameHi: 'पुलिस क्लीयरेंस', keywords: ['PCC', 'Police Clearance'] },
+  ],
+  m17: [
+    { name: 'New Electricity Connection', nameHi: 'नया बिजली कनेक्शन', keywords: ['Electricity', 'Meter'] },
+    { name: 'Water Connection', nameHi: 'पानी कनेक्शन', keywords: ['Water', 'Jal'] },
+    { name: 'Gas Connection', nameHi: 'गैस कनेक्शन', keywords: ['Gas', 'LPG'] },
+    { name: 'Name Change Application', nameHi: 'नाम परिवर्तन', keywords: ['Name Transfer'] },
+  ],
+  m18: [
+    { name: 'Kisan Credit Card', nameHi: 'किसान क्रेडिट कार्ड', keywords: ['KCC'] },
+    { name: 'PMFBY Crop Insurance', nameHi: 'पीएमएफबीवाई', keywords: ['PMFBY', 'Crop Bima'] },
+    { name: 'Digital Land Record', nameHi: 'डिजिटल भूलेख', keywords: ['DILRMP'] },
+    { name: 'Soil Health Card', nameHi: 'मृदा स्वास्थ्य', keywords: ['Soil Health'] },
+  ],
+  m19: [
+    { name: 'DigiLocker Setup', nameHi: 'डिजीलॉकर', keywords: ['DigiLocker'] },
+    { name: 'CSC Applications', nameHi: 'सीएससी', keywords: ['CSC', 'Jan Seva'] },
+    { name: 'Online Form Filling', nameHi: 'ऑनलाइन फॉर्म', keywords: ['Online Form'] },
+    { name: 'Document Scanning', nameHi: 'दस्तावेज़ स्कैन', keywords: ['Scanning'] },
+  ],
+  m20: [
+    { name: 'PM-KISAN', nameHi: 'पीएम-किसान', keywords: ['PM Kisan'] },
+    { name: 'Ayushman Bharat', nameHi: 'आयुष्मान भारत', keywords: ['PMJAY'] },
+    { name: 'Mudra Loan', nameHi: 'मुद्रा लोन', keywords: ['Mudra'] },
+    { name: 'PMAY Housing', nameHi: 'पीएम आवास', keywords: ['PMAY'] },
+  ],
+  m21: [
+    { name: 'University Shortlisting', nameHi: 'विश्वविद्यालय', keywords: ['SOP', 'University'] },
+    { name: 'IELTS / TOEFL Prep', nameHi: 'आईईएलटीएस', keywords: ['IELTS', 'TOEFL'] },
+    { name: 'Visa Application', nameHi: 'वीज़ा आवेदन', keywords: ['Student Visa'] },
+    { name: 'Pre-departure Briefing', nameHi: 'पूर्व-प्रस्थान', keywords: ['Pre Departure'] },
+  ],
+  m22: [
+    { name: 'NEET / JEE Counseling', nameHi: 'नीट / जेईई', keywords: ['NEET', 'JEE'] },
+    { name: 'CAT Counseling', nameHi: 'कैट', keywords: ['CAT', 'MBA'] },
+    { name: 'Seat Allotment', nameHi: 'सीट आवंटन', keywords: ['Allotment'] },
+    { name: 'Enrollment Support', nameHi: 'नामांकन', keywords: ['Enrollment'] },
+  ],
+  m23: [
+    { name: 'Resume Building', nameHi: 'रिज्यूमे', keywords: ['Resume', 'CV'] },
+    { name: 'Interview Prep', nameHi: 'साक्षात्कार तैयारी', keywords: ['Interview'] },
+    { name: 'Offer Negotiation', nameHi: 'ऑफर वार्ता', keywords: ['Negotiate'] },
+    { name: 'Job Placement', nameHi: 'नौकरी प्लेसमेंट', keywords: ['Placement'] },
+  ],
+  m24: [
+    { name: 'Canada PR', nameHi: 'कनाडा पीआर', keywords: ['Canada', 'Express Entry'] },
+    { name: 'Australia PR', nameHi: 'ऑस्ट्रेलिया', keywords: ['Australia', '189', '190'] },
+    { name: 'UK Visa', nameHi: 'यूके वीज़ा', keywords: ['UK', 'Skilled Worker'] },
+    { name: 'USA Visa', nameHi: 'यूएसए', keywords: ['H1B', 'L1'] },
+  ],
+  m25: [
+    { name: 'Custom Request', nameHi: 'विशेष अनुरोध', keywords: ['Custom', 'Other'] },
+  ],
+  m26: [
+    { name: 'Bus / Train Booking', nameHi: 'बस / ट्रेन', keywords: ['IRCTC', 'Booking'] },
+    { name: 'Flight Booking', nameHi: 'फ्लाइट बुकिंग', keywords: ['Flight'] },
+    { name: 'Hotel Stay', nameHi: 'होटल', keywords: ['Hotel'] },
+    { name: 'Tour Package', nameHi: 'टूर पैकेज', keywords: ['Tour Package'] },
+    { name: 'Pilgrimage Tour', nameHi: 'तीर्थ यात्रा', keywords: ['Char Dham', 'Tirath'] },
+    { name: 'Travel Insurance', nameHi: 'यात्रा बीमा', keywords: ['Travel Insurance'] },
+  ],
+  m27: [
+    { name: 'Doctor Visits', nameHi: 'डॉक्टर विज़िट', keywords: ['MR', 'Detailing'] },
+    { name: 'Product Detailing', nameHi: 'उत्पाद विवरण', keywords: ['Product'] },
+    { name: 'Hospital Coverage', nameHi: 'अस्पताल कवरेज', keywords: ['Hospital'] },
+    { name: 'Pharma Distribution', nameHi: 'फार्मा वितरण', keywords: ['Pharma'] },
+  ],
+  m28: [
+    { name: 'FMCG Distribution', nameHi: 'एफएमसीजी', keywords: ['FMCG'] },
+    { name: 'Pharma Wholesale', nameHi: 'फार्मा थोक', keywords: ['Pharma'] },
+    { name: 'Agri-Inputs', nameHi: 'कृषि इनपुट', keywords: ['Seeds', 'Fertilizer'] },
+    { name: 'Regional Wholesale', nameHi: 'क्षेत्रीय थोक', keywords: ['Wholesale'] },
+  ],
+};
+
+export const INDIAN_STATES = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Delhi', 'Goa', 'Gujarat',
+  'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra',
+  'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim',
+  'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+];
+
+export const DISTRICTS_BY_STATE: Record<string, string[]> = {
+  'Bihar': ['Patna', 'Gaya', 'Muzaffarpur', 'Bhagalpur', 'Aurangabad', 'Motihari'],
+  'Delhi': ['New Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi'],
+  'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Aurangabad', 'Nashik', 'Thane'],
+  'Karnataka': ['Bengaluru Urban', 'Mysuru', 'Mangaluru', 'Hubli-Dharwad'],
+  'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot'],
+  'Telangana': ['Hyderabad', 'Warangal', 'Karimnagar'],
+  'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Varanasi', 'Agra', 'Noida', 'Ghaziabad'],
+  'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota'],
+  'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli'],
+  'West Bengal': ['Kolkata', 'Howrah', 'Darjeeling', 'Siliguri'],
+};
+
+// EN/HI dictionary
+export const STR = {
+  EN: {
+    sign_in: 'Sign In', i_need_help: 'I Need Help', im_advisor: "I'm an Advisor",
+    find_your_agents: 'Find your', agents: 'Agents',
+    hero_sub: 'Find verified professionals by service, document type, or keyword.',
+    search_placeholder: 'Search advisors, services, locations...', search: 'Search', try_: 'TRY:',
+    collaborating: 'Collaborating Advisors', verified_experts: 'Verified Experts',
+    our_services: 'OUR SERVICES', service_categories: 'Professional Service Categories',
+    service_sub: 'Select a service to find verified professionals near you.',
+    verified_pros: 'Verified Professionals', escrow_protected: 'Escrow Protected',
+    no_pros: 'No verified professionals found', try_diff: 'Try a different category or clear the filter.', reset: 'Reset Filters',
+    how_it_works: 'HOW IT WORKS', book_3_steps: 'Book a Consultation in 3 Simple Steps',
+    s1_title: 'Choose a Service', s1_desc: 'Browse our 28 verified service categories and find the right professional.',
+    s2_title: 'Select an Advisor', s2_desc: 'Review profiles, ratings, experience, and fees to pick the best match.',
+    s3_title: 'Book & Consult', s3_desc: 'Pay securely via escrow, schedule your session, and get expert advice.',
+    cta_title: 'Ready to Get Expert Advice?', cta_sub: 'Join thousands of satisfied clients. Book a verified advisor today.',
+    book_consult: 'Book Consultation', register_advisor: 'Register as Advisor',
+    set_location: 'Set your location', tap_filter: '— tap to filter advisors by state', change_location: 'Change location',
+    clear: 'Clear', district: 'District', select_state: 'Select State', select_district: 'Select District',
+    sub_services: 'Sub-Services', find_expert: 'Find Expert', close: 'Close',
+    consultation_fee: 'Consultation Fee', view: 'View', connect: 'Connect', explore: 'Explore →', selected: '✓ Selected',
+  },
+  HI: {
+    sign_in: 'साइन इन', i_need_help: 'मुझे मदद चाहिए', im_advisor: 'मैं सलाहकार हूं',
+    find_your_agents: 'अपने', agents: 'एजेंट खोजें',
+    hero_sub: 'सेवा, दस्तावेज़ या शब्द से सत्यापित पेशेवर खोजें।',
+    search_placeholder: 'सलाहकार, सेवा, स्थान खोजें...', search: 'खोजें', try_: 'जैसे:',
+    collaborating: 'सहयोगी सलाहकार', verified_experts: 'सत्यापित विशेषज्ञ',
+    our_services: 'हमारी सेवाएं', service_categories: 'पेशेवर सेवा श्रेणियां',
+    service_sub: 'अपने पास सत्यापित पेशेवरों को खोजने के लिए सेवा का चयन करें।',
+    verified_pros: 'सत्यापित पेशेवर', escrow_protected: 'एस्क्रो सुरक्षित',
+    no_pros: 'कोई सत्यापित पेशेवर नहीं मिला', try_diff: 'अलग श्रेणी आज़माएं या फ़िल्टर साफ़ करें।', reset: 'फ़िल्टर रीसेट',
+    how_it_works: 'यह कैसे काम करता है', book_3_steps: '3 आसान चरणों में परामर्श बुक करें',
+    s1_title: 'सेवा चुनें', s1_desc: '28 सत्यापित सेवा श्रेणियों में से सही पेशेवर खोजें।',
+    s2_title: 'सलाहकार चुनें', s2_desc: 'प्रोफ़ाइल, रेटिंग, अनुभव और शुल्क की समीक्षा करें।',
+    s3_title: 'बुक और परामर्श', s3_desc: 'एस्क्रो के माध्यम से सुरक्षित भुगतान करें।',
+    cta_title: 'विशेषज्ञ सलाह के लिए तैयार?', cta_sub: 'हजारों ग्राहकों से जुड़ें। आज ही एक सलाहकार बुक करें।',
+    book_consult: 'परामर्श बुक करें', register_advisor: 'सलाहकार के रूप में पंजीकरण',
+    set_location: 'अपना स्थान सेट करें', tap_filter: '— राज्य के अनुसार फ़िल्टर करने के लिए टैप करें', change_location: 'स्थान बदलें',
+    clear: 'साफ़ करें', district: 'जिला', select_state: 'राज्य चुनें', select_district: 'जिला चुनें',
+    sub_services: 'उप-सेवाएं', find_expert: 'विशेषज्ञ खोजें', close: 'बंद',
+    consultation_fee: 'परामर्श शुल्क', view: 'देखें', connect: 'जुड़ें', explore: 'खोजें →', selected: '✓ चयनित',
+  },
+};
+
+export const HERO_IMAGES = [
+  { uri: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&q=60', labelEN: 'Verified Experts', labelHI: 'सत्यापित विशेषज्ञ' },
+  { uri: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&q=60', labelEN: 'Property Experts', labelHI: 'संपत्ति विशेषज्ञ' },
+  { uri: 'https://images.unsplash.com/photo-1589578228447-e1a4e481c6c8?w=600&q=60', labelEN: 'Legal Advisors', labelHI: 'कानूनी सलाहकार' },
+  { uri: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=60', labelEN: 'Tax & Finance', labelHI: 'कर और वित्त' },
+];
