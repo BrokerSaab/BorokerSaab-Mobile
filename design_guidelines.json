@@ -1,0 +1,179 @@
+{
+  "app_name": "BrokerSaab",
+  "personality": "1 iOS-Native Clean",
+  "personality_one_liner": "A premium, highly readable marketplace where content is the hero, elevated by cinematic navy and gold accents to project absolute trust and authority.",
+  "color": {
+    "surface": "#FFFFFF",
+    "onSurface": "#1C1C1E",
+    "surfaceSecondary": "#F2F2F7",
+    "onSurfaceSecondary": "#3A3A3C",
+    "surfaceTertiary": "#E5E5EA",
+    "onSurfaceTertiary": "#8E8E93",
+    "surfaceInverse": "#0B1F3A",
+    "onSurfaceInverse": "#FFFFFF",
+    "brand": "#0B1F3A",
+    "brandPrimary": "#0B1F3A",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#D4AF37",
+    "onBrandSecondary": "#45350A",
+    "brandTertiary": "#FDF6E3",
+    "onBrandTertiary": "#8A6D22",
+    "success": "#34C759",
+    "onSuccess": "#FFFFFF",
+    "warning": "#FFCC00",
+    "onWarning": "#45350A",
+    "error": "#FF3B30",
+    "onError": "#FFFFFF",
+    "info": "#0B1F3A",
+    "onInfo": "#FFFFFF",
+    "border": "#E5E5EA",
+    "borderStrong": "#C7C7CC",
+    "divider": "#E5E5EA"
+  },
+  "typography": {
+    "displayFontFamily": "Plus Jakarta Sans",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous vertical breathing room. Padding around content blocks, safe-area strictly maintained. No half-width orphans on cards.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": 1,
+  "navigation": "bottom_tabs",
+  "icon_set": "Ionicons",
+  "glassmorphism": {
+    "enabled": true,
+    "do_s": [
+      "Use blur on bottom tab bar, floating bottom-sheet headers, and sticky headers above scrollable catalogs.",
+      "Apply frosted glass over the abstract navy/gold texture for premium 'Authorized' hero cards.",
+      "Pair glass with a translucent tinted base (>=70% surface opacity) to guarantee readability."
+    ],
+    "dont_s": [
+      "Never blur body text regions, form fields, or primary buttons.",
+      "Never stack more than 2 glass surfaces (e.g., header and tab bar is max)."
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-blur",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Client Home (Discover)",
+      "purpose": "A premium catalog entry point allowing clients to discover top advisors by category with trust-building visual cues.",
+      "states": {
+        "loading": "Centered spinner over a subtle Navy background.",
+        "empty": "Should not be empty, but search filters fallback to 'No advisors found' with a clear reset CTA.",
+        "error": "Readable message: 'Unable to load advisors.' + Retry button."
+      },
+      "layout": "Sticky glass header (Greeting + Wallet Balance). Below it: A full-bleed 'Authorized Dealer' hero card featuring abstract navy/gold textured imagery + gradient scrim + white text. Horizontal scroll of category chips (36pt height, brandTertiary filled) ensuring it does not crowd content. Vertical list of advisor cards below (each card takes full width minus padding)."
+    },
+    {
+      "name": "Advisor Catalog & Filters",
+      "purpose": "Deep browsing of advisors based on detailed filters (fee, rating, experience).",
+      "states": {
+        "loading": "Skeleton rows resembling advisor cards.",
+        "empty": "Illustration of an empty desk + 'Adjust your filters to find advisors'.",
+        "error": "Error loading catalog, pull to refresh."
+      },
+      "layout": "Pinned glass filter row below header. Advisor cards layout: Avatar on left, Details on right. Prominent Gold badge for 'Authorized' status. Clear 'Book' button aligned right."
+    },
+    {
+      "name": "Booking & Slot Picker",
+      "purpose": "Frictionless multi-step flow to pick time slots, mode, and execute payment.",
+      "states": {
+        "loading": "Spinner centered on the bottom sheet.",
+        "empty": "N/A",
+        "error": "Slot unavailable message + select another time."
+      },
+      "layout": "Bottom sheet pattern using @gorhom/bottom-sheet. Horizontal date strip (pill selection). Grid of time slots. Segmented control for Mode (Phone/Video/Chat/Physical). Sticky brandPrimary 'Proceed to Pay' CTA anchored at bottom above home indicator."
+    },
+    {
+      "name": "Service Ticket Workspace",
+      "purpose": "A dedicated collaborative space where clients and advisors track work stages, confirm milestones, and release escrow funds.",
+      "states": {
+        "loading": "Timeline skeletons.",
+        "empty": "No active tickets illustration + 'Book an advisor to start'.",
+        "error": "Failed to load ticket details."
+      },
+      "layout": "Stack Screen. Top: Sticky ticket summary (Status Pill, Title, Amount). Middle: Scrollable timeline of milestones with vertical line connecting them. Bottom: KeyboardAvoidingView wrapping the comment input and primary CTA ('Approve Stage')."
+    },
+    {
+      "name": "Advisor Dashboard",
+      "purpose": "Operational command center for advisors to track earnings, upcoming bookings, and respond to quotes.",
+      "states": {
+        "loading": "Metric card skeletons.",
+        "empty": "Welcome state with 'Complete profile to get bookings'.",
+        "error": "Failed to load dashboard metrics."
+      },
+      "layout": "Grid of KPI cards (2-column, utilizing flexWrap and space-between). List of actionable items (Pending Quotes, Active Tickets) below. Pinned 'Authorized Dealer' upgrade banner with brandSecondary background."
+    },
+    {
+      "name": "Advisor Onboarding",
+      "purpose": "An 8-step funnel guiding advisors to set up their professional profile seamlessly.",
+      "states": {
+        "loading": "Subtle top progress indicator.",
+        "empty": "N/A",
+        "error": "Inline validation errors below inputs in error color."
+      },
+      "layout": "Top SafeArea progress bar. Generous vertical spacing for inputs (labels above). Single column form. Sticky brandPrimary CTA at the bottom to ensure easy navigation to the next step."
+    }
+  ],
+  "images": {
+    "hero_authorized_background": {
+      "url": "https://images.unsplash.com/photo-1640654694019-b9d3567c0e56?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzZ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMG5hdnklMjBhbmQlMjBnb2xkJTIwbHV4dXJ5JTIwdGV4dHVyZXxlbnwwfHx8fDE3ODI2Mjc4ODF8MA&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.unsplash.com/photo-1640027659327-96f1043e4278?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzZ8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMG5hdnklMjBhbmQlMjBnb2xkJTIwbHV4dXJ5JTIwdGV4dHVyZXxlbnwwfHx8fDE3ODI2Mjc4ODF8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Abstract navy and gold luxury texture"
+    },
+    "advisor_portrait_1": {
+      "url": "https://images.unsplash.com/photo-1685375421073-4dae366f8e84?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1NzZ8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBpbmRpYW4lMjBmaW5hbmNpYWwlMjBhZHZpc29yJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzgyNjI3ODgxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Professional Indian financial advisor portrait"
+    },
+    "advisor_portrait_2": {
+      "url": "https://images.unsplash.com/photo-1659355894000-b8617fc7cf8d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1NzZ8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBpbmRpYW4lMjBmaW5hbmNpYWwlMjBhZHZpc29yJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzgyNjI3ODgxfDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Indian financial advisor portrait"
+    },
+    "empty_state_desk": {
+      "url": "https://images.unsplash.com/photo-1759661142441-d77ffb3ca943?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBlbXB0eSUyMGRlc2slMjB3b3Jrc3BhY2UlMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc4MjYyNzg4MXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Modern empty desk workspace background"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Apply '1 iOS-Native Clean' rules: highly readable UI framing the content. Do not exceed 500 font-weight.",
+    "Utilize Navy (#0B1F3A) primarily for core CTAs and Inverse surface elements to retain a premium edge without feeling heavy.",
+    "Utilize Gold (#D4AF37) exclusively for premium markers ('Authorized Dealer' badges, 'Best Value' tags, upgrade accents). Do not use it for primary interactions.",
+    "Implement the gradient scrim pattern (transparent to 70% surfaceInverse) over the hero_authorized_background image to ensure text readability.",
+    "For the booking flow, rely heavily on @gorhom/bottom-sheet. Keep the screen context visible behind the frosted glass scrim.",
+    "Ensure the Client/Advisor role switch occurs elegantly at sign-in, maintaining consistent branding but separating their tab spaces.",
+    "In the Escrow Service Ticket flow, layout the milestone confirmations vertically like a timeline. Pin the CTA to the bottom to ensure easy access to action items.",
+    "Implement haptics on primary actions: booking confirmations, milestone approvals, and tab switching.",
+    "MANDATORY: Follow <Spacing_and_Layout> guidelines—buttons must be sticky above scrolling content with proper safe area padding."
+  ]
+}
