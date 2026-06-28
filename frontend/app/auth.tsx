@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -77,7 +77,7 @@ export default function Auth() {
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={{ flexGrow: 1, padding: spacing.xl, justifyContent: 'center' }} keyboardShouldPersistTaps="handled">
             <View style={styles.brandRow}>
-              <View style={styles.logo}><Text style={styles.logoText}>BS</Text></View>
+              <Image source={require('../assets/images/brokersaab-logo.png')} style={styles.logoImg} resizeMode="contain" />
               <View>
                 <Text style={styles.brand}>Broker<Text style={{ color: colors.brandSecondary }}>Saab</Text></Text>
                 <Text style={styles.tagline}>TRUSTED ADVISORY PLATFORM</Text>
@@ -178,8 +178,7 @@ export default function Auth() {
 
 const styles = StyleSheet.create({
   brandRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xl, gap: 12 },
-  logo: { width: 44, height: 44, borderRadius: 12, backgroundColor: colors.brandSecondary, alignItems: 'center', justifyContent: 'center' },
-  logoText: { color: colors.brand, fontWeight: '800', fontSize: 18 },
+  logoImg: { width: 56, height: 56 },
   brand: { color: '#fff', fontSize: 22, fontWeight: '700' },
   tagline: { color: '#88A0C0', fontSize: 10, letterSpacing: 1.8, marginTop: 2 },
   card: { backgroundColor: 'rgba(255,255,255,0.06)', borderColor: 'rgba(212,175,55,0.25)', borderWidth: 1, borderRadius: radius.lg, padding: spacing.xl },

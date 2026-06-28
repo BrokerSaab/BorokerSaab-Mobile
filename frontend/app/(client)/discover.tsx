@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, FlatList, RefreshControl, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, FlatList, RefreshControl, TextInput, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -40,9 +40,12 @@ export default function Discover() {
     <View style={{ flex: 1, backgroundColor: colors.surface }}>
       <SafeAreaView edges={['top']} style={{ backgroundColor: colors.brand }}>
         <View style={styles.header}>
-          <View>
-            <Text style={styles.hello}>Hello,</Text>
-            <Text style={styles.name}>{user?.full_name || 'there'}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+            <Image source={require('../../assets/images/brokersaab-logo.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
+            <View>
+              <Text style={styles.hello}>Hello,</Text>
+              <Text style={styles.name}>{user?.full_name || 'there'}</Text>
+            </View>
           </View>
           <Pressable testID="wallet-pill" onPress={() => router.push('/(client)/profile')} style={styles.walletPill}>
             <Ionicons name="wallet" size={14} color={colors.brandSecondary} />
