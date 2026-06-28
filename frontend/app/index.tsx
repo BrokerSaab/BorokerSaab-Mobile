@@ -12,7 +12,7 @@ export default function Index() {
       </View>
     );
   }
-  if (!user) return <Redirect href="/auth" />;
-  if (user.role === 'advisor') return <Redirect href="/(advisor)/dashboard" />;
+  // Advisors land on dashboard; everyone else (including unauthenticated guests) browses the catalog
+  if (user?.role === 'advisor') return <Redirect href="/(advisor)/dashboard" />;
   return <Redirect href="/(client)/discover" />;
 }

@@ -4,23 +4,29 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { api } from '@/src/api';
+import { useAuth } from '@/src/auth';
 import { colors, radius, spacing } from '@/src/theme';
 import { StatusPill } from '@/src/ui';
+import { SignInGate } from '@/src/auth-gate';
 
 export default function ClientTickets() {
   const router = useRouter();
+  const { user } = useAuth();
   const [tickets, setTickets] = useState<any[]>([]);
   const [quotes, setQuotes] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [tab, setTab] = useState<'tickets' | 'quotes'>('tickets');
 
   const load = useCallback(async () => {
+    if (!user) return;
     setTickets(await api.get('/tickets'));
     setQuotes(await api.get('/quotes'));
-  }, []);
+  }, [user]);
   useEffect(() => { load(); }, [load]);
 
   const onRefresh = async () => { setRefreshing(true); await load(); setRefreshing(false); };
+
+  if (!user) return <SignInGate icon="document-text" title="Your Tickets & Quotes" message="Sign in to view escrow-protected service tickets and your quote requests." />;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.surfaceSecondary }} edges={['top']}>

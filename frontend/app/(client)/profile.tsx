@@ -6,6 +6,7 @@ import { api } from '@/src/api';
 import { useAuth } from '@/src/auth';
 import { colors, radius, spacing } from '@/src/theme';
 import { useRouter } from 'expo-router';
+import { SignInGate } from '@/src/auth-gate';
 
 export default function Profile() {
   const { user, refresh, signOut } = useAuth();
@@ -18,11 +19,14 @@ export default function Profile() {
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
+    if (!user) return;
     setWallet(await api.get('/wallet'));
     setSubs(await api.get('/contact-subscriptions/me'));
-  }, []);
+  }, [user]);
   useEffect(() => { load(); }, [load]);
   const onRefresh = async () => { setRefreshing(true); await refresh(); await load(); setRefreshing(false); };
+
+  if (!user) return <SignInGate icon="person-circle" title="Your Profile" message="Sign in to manage your account, wallet, credits, and unlock history." />;
 
   const addMoney = async () => {
     const n = parseFloat(amount);

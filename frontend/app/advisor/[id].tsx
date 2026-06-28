@@ -23,6 +23,7 @@ export default function AdvisorDetail() {
   useEffect(() => { api.get(`/advisors/${id}`).then(setAdvisor); }, [id]);
 
   const unlockContact = async () => {
+    if (!user) { router.push('/auth'); return; }
     setUnlocking(true);
     try {
       const r = await api.post(`/advisors/${id}/unlock`, {});
@@ -118,13 +119,13 @@ export default function AdvisorDetail() {
       </ScrollView>
 
       <View style={styles.bottomBar}>
-        <Pressable testID="request-quote-btn" onPress={() => setQuoteOpen(true)} style={[styles.actionBtn, { backgroundColor: colors.surfaceSecondary }]}>
+        <Pressable testID="request-quote-btn" onPress={() => user ? setQuoteOpen(true) : router.push('/auth')} style={[styles.actionBtn, { backgroundColor: colors.surfaceSecondary }]}>
           <Ionicons name="document-text" size={18} color={colors.brand} />
           <Text style={{ color: colors.brand, fontWeight: '700', marginLeft: 6 }}>Quote</Text>
         </Pressable>
-        <Pressable testID="book-now-btn" onPress={() => setBookOpen(true)} style={[styles.actionBtn, { backgroundColor: colors.brand, flex: 2 }]}>
+        <Pressable testID="book-now-btn" onPress={() => user ? setBookOpen(true) : router.push('/auth')} style={[styles.actionBtn, { backgroundColor: colors.brand, flex: 2 }]}>
           <Ionicons name="calendar" size={18} color="#fff" />
-          <Text style={{ color: '#fff', fontWeight: '700', marginLeft: 6 }}>Book Consultation · ₹{advisor.consultation_fee}</Text>
+          <Text style={{ color: '#fff', fontWeight: '700', marginLeft: 6 }}>{user ? `Book Consultation · ₹${advisor.consultation_fee}` : `Sign in to Book · ₹${advisor.consultation_fee}`}</Text>
         </Pressable>
       </View>
 

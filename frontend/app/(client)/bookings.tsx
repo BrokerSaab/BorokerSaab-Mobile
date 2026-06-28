@@ -3,15 +3,20 @@ import { View, Text, FlatList, Pressable, StyleSheet, RefreshControl } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { api } from '@/src/api';
+import { useAuth } from '@/src/auth';
 import { colors, radius, spacing } from '@/src/theme';
 import { StatusPill } from '@/src/ui';
+import { SignInGate } from '@/src/auth-gate';
 
 export default function Bookings() {
+  const { user } = useAuth();
   const [items, setItems] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const load = useCallback(async () => setItems(await api.get('/bookings')), []);
+  const load = useCallback(async () => { if (user) setItems(await api.get('/bookings')); }, [user]);
   useEffect(() => { load(); }, [load]);
   const onRefresh = async () => { setRefreshing(true); await load(); setRefreshing(false); };
+
+  if (!user) return <SignInGate icon="calendar" title="Your Bookings" message="Sign in to view your consultation bookings and their status." />;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.surfaceSecondary }} edges={['top']}>

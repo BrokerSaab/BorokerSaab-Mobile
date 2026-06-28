@@ -806,45 +806,61 @@ async def my_unlocks(user=Depends(get_user)):
 
 # ---------- Seed ----------
 CATEGORIES = [
-    ("m1", "Life Insurance", "shield-checkmark"),
-    ("m2", "Health Insurance", "medkit"),
-    ("m3", "Motor Insurance", "car"),
-    ("m4", "Property Insurance", "home"),
-    ("m5", "Travel Insurance", "airplane"),
-    ("m6", "Crop Insurance", "leaf"),
-    ("m7", "Marine Insurance", "boat"),
-    ("m8", "Commercial Insurance", "business"),
-    ("m9", "Mutual Funds", "trending-up"),
-    ("m10", "Stock Advisory", "stats-chart"),
-    ("m11", "Fixed Deposits", "wallet"),
-    ("m12", "Real Estate", "construct"),
-    ("m13", "Tax Planning", "calculator"),
-    ("m14", "Legal Advisory", "library"),
-    ("m15", "Loan Advisory", "cash"),
-    ("m16", "Gold & Commodity", "diamond"),
-    ("m17", "NRI Services", "globe"),
-    ("m18", "Retirement Planning", "hourglass"),
-    ("m19", "Business Advisory", "briefcase"),
+    ("m1", "Birth, Death & Marriage Papers", "document-text"),
+    ("m2", "Identity Cards & Documents", "card"),
+    ("m3", "Income, Caste & Residence", "receipt"),
+    ("m4", "Property & Land Papers", "home"),
+    ("m5", "Tax Filing", "calculator"),
+    ("m6", "Business Registration & Licences", "business"),
+    ("m7", "Brand & Idea Protection", "shield-checkmark"),
+    ("m8", "Bank, Loan & Credit Card", "card-outline"),
+    ("m9", "Insurance (Bima)", "umbrella"),
+    ("m10", "Vehicle & Driving (RTO)", "car"),
+    ("m11", "Legal & Court Help", "library"),
+    ("m12", "Job, PF & Labour", "briefcase"),
+    ("m13", "School & College Papers", "school"),
+    ("m14", "Pension & Govt Schemes", "ribbon"),
+    ("m15", "Savings & Investment", "trending-up"),
+    ("m16", "Passport, Visa & Foreign", "airplane"),
+    ("m17", "Electricity, Water & Gas", "flash"),
+    ("m18", "Farmer & Agriculture", "leaf"),
+    ("m19", "Online Form & Document Help", "document"),
+    ("m20", "Central Government Schemes", "flag"),
+    ("m21", "Study Abroad Consulting", "globe"),
+    ("m22", "Domestic College Admission", "school-outline"),
+    ("m23", "Job Placement & Recruitment", "people"),
+    ("m24", "Visa & PR Immigration", "earth"),
+    ("m25", "Others / Custom Service", "ellipsis-horizontal-circle"),
+    ("m26", "Tour & Travel", "map"),
+    ("m27", "Local Medical Representative", "medkit"),
+    ("m28", "Local Distributors", "cube"),
 ]
 
 DEMO_ADVISORS = [
-    {"name": "Ravi Kumar", "biz": "Kumar Advisory Services", "loc": "Lucknow", "state": "Uttar Pradesh", "fee": 500, "yrs": 12, "cats": ["m1", "m2", "m3"], "type": "AUTHORIZED", "auth": True, "rating": 4.8, "n": 23, "langs": ["English", "Hindi"], "bio": "12+ years helping families secure their financial future via tailored insurance & investment plans."},
-    {"name": "Priya Sharma", "biz": "Sharma Financial", "loc": "Delhi", "state": "Delhi", "fee": 300, "yrs": 8, "cats": ["m9", "m10", "m13"], "type": "AUTHORIZED", "auth": True, "rating": 4.5, "n": 11, "langs": ["English", "Hindi"], "bio": "SEBI-registered advisor with a focus on mutual funds and tax-efficient investing."},
-    {"name": "Amit Verma", "biz": "AV Consulting", "loc": "Mumbai", "state": "Maharashtra", "fee": 400, "yrs": 5, "cats": ["m14", "m13"], "type": "REGULAR", "auth": False, "rating": 4.2, "n": 5, "langs": ["English", "Hindi", "Marathi"], "bio": "Legal advisor for property registry, GST and contract review."},
-    {"name": "Neha Iyer", "biz": "Iyer Wealth", "loc": "Bengaluru", "state": "Karnataka", "fee": 600, "yrs": 10, "cats": ["m9", "m18", "m11"], "type": "AUTHORIZED", "auth": True, "rating": 4.7, "n": 18, "langs": ["English", "Tamil", "Kannada"], "bio": "Wealth planning specialist for IT professionals and HNIs."},
-    {"name": "Rohit Singh", "biz": "Singh Insurance Co", "loc": "Jaipur", "state": "Rajasthan", "fee": 250, "yrs": 6, "cats": ["m1", "m2", "m4", "m5"], "type": "REGULAR", "auth": False, "rating": 4.3, "n": 9, "langs": ["English", "Hindi"], "bio": "Insurance generalist — life, health, property and travel cover at competitive rates."},
-    {"name": "Sneha Patel", "biz": "Patel Tax Co", "loc": "Ahmedabad", "state": "Gujarat", "fee": 350, "yrs": 7, "cats": ["m13", "m15", "m19"], "type": "AUTHORIZED", "auth": True, "rating": 4.6, "n": 14, "langs": ["English", "Hindi", "Gujarati"], "bio": "CA-led tax filing, GST, and small business advisory."},
-    {"name": "Arjun Reddy", "biz": "Reddy Realty Advisors", "loc": "Hyderabad", "state": "Telangana", "fee": 450, "yrs": 9, "cats": ["m12", "m15"], "type": "REGULAR", "auth": False, "rating": 4.4, "n": 7, "langs": ["English", "Telugu", "Hindi"], "bio": "Real estate transactions, home loan structuring and bainama work."},
-    {"name": "Kavita Joshi", "biz": "Joshi NRI Services", "loc": "Pune", "state": "Maharashtra", "fee": 800, "yrs": 15, "cats": ["m17", "m13", "m9"], "type": "AUTHORIZED", "auth": True, "rating": 4.9, "n": 32, "langs": ["English", "Hindi", "Marathi"], "bio": "Specialized NRI tax, FEMA compliance and repatriation advisory."},
+    {"name": "Rambrat", "biz": "Broker Associates", "loc": "Patna", "state": "Bihar", "fee": 400, "yrs": 5, "cats": ["m6", "m11"], "type": "AUTHORIZED", "auth": True, "rating": 4.8, "n": 23, "langs": ["English", "Hindi", "Bhojpuri"], "bio": "5+ years experience helping clients with business registration, licences and legal advisory."},
+    {"name": "Papa ji", "biz": "Real Estate Experts", "loc": "Patna", "state": "Bihar", "fee": 1000, "yrs": 40, "cats": ["m4"], "type": "AUTHORIZED", "auth": True, "rating": 4.9, "n": 18, "langs": ["Hindi"], "bio": "40 years specialising in property registry, bainama, sale-deed and land record work."},
+    {"name": "Deepu Singh", "biz": "Travel Plus", "loc": "Aurangabad", "state": "Maharashtra", "fee": 1500, "yrs": 8, "cats": ["m26"], "type": "REGULAR", "auth": False, "rating": 4.5, "n": 11, "langs": ["Hindi", "English"], "bio": "Travel consultant — bus, train, flight, tour packages and pilgrimage tours."},
+    {"name": "Neha Iyer", "biz": "Iyer Wealth", "loc": "Bengaluru", "state": "Karnataka", "fee": 600, "yrs": 10, "cats": ["m15", "m5", "m8"], "type": "AUTHORIZED", "auth": True, "rating": 4.7, "n": 18, "langs": ["English", "Tamil", "Kannada"], "bio": "Wealth planning, tax filing and loan structuring for IT professionals."},
+    {"name": "Sneha Patel", "biz": "Patel Tax Co", "loc": "Ahmedabad", "state": "Gujarat", "fee": 350, "yrs": 7, "cats": ["m5", "m6", "m8"], "type": "AUTHORIZED", "auth": True, "rating": 4.6, "n": 14, "langs": ["English", "Hindi", "Gujarati"], "bio": "CA-led tax filing, GST, ITR and small business advisory."},
+    {"name": "Ravi Ranjan", "biz": "Identity & Records", "loc": "Patna", "state": "Bihar", "fee": 300, "yrs": 12, "cats": ["m1", "m2", "m3"], "type": "REGULAR", "auth": False, "rating": 4.4, "n": 9, "langs": ["Hindi", "English"], "bio": "Aadhaar, PAN, birth/death certificates and civil registry expert."},
+    {"name": "Kavita Joshi", "biz": "Joshi Immigration", "loc": "Pune", "state": "Maharashtra", "fee": 800, "yrs": 15, "cats": ["m16", "m21", "m24"], "type": "AUTHORIZED", "auth": True, "rating": 4.9, "n": 32, "langs": ["English", "Hindi", "Marathi"], "bio": "Passport, visa, study abroad and PR immigration for Canada/Australia/UK."},
+    {"name": "Arjun Reddy", "biz": "Reddy Insurance", "loc": "Hyderabad", "state": "Telangana", "fee": 250, "yrs": 9, "cats": ["m9"], "type": "REGULAR", "auth": False, "rating": 4.3, "n": 7, "langs": ["English", "Telugu", "Hindi"], "bio": "Term plans, health, motor, crop insurance and claim support."},
+    {"name": "Rohit Singh", "biz": "Singh RTO Services", "loc": "Jaipur", "state": "Rajasthan", "fee": 200, "yrs": 6, "cats": ["m10", "m19"], "type": "REGULAR", "auth": False, "rating": 4.2, "n": 5, "langs": ["English", "Hindi"], "bio": "DL renewal, vehicle transfer, RC duplicates, and online form filling."},
+    {"name": "Priya Sharma", "biz": "Sharma Financial", "loc": "Delhi", "state": "Delhi", "fee": 500, "yrs": 8, "cats": ["m15", "m5"], "type": "AUTHORIZED", "auth": True, "rating": 4.6, "n": 15, "langs": ["English", "Hindi"], "bio": "SEBI-registered — mutual funds, tax-efficient investing and retirement planning."},
 ]
 
 
 async def seed_if_empty():
-    if await db.categories.count_documents({}) == 0:
+    # Re-seed categories if count doesn't match (forces refresh when CATEGORIES list changes)
+    existing_count = await db.categories.count_documents({})
+    if existing_count != len(CATEGORIES):
+        await db.categories.delete_many({})
         await db.categories.insert_many([
             {"id": c[0], "name": c[1], "icon": c[2]} for c in CATEGORIES
         ])
-        log.info("Seeded categories")
+        log.info(f"Seeded {len(CATEGORIES)} categories")
+        # Also reset demo advisors to match new categories
+        await db.users.delete_many({"role": "advisor", "phone": {"$regex": "^98765400"}})
     if await db.users.count_documents({"role": "advisor"}) == 0:
         avail = []
         for day in [1, 2, 3, 4, 5]:

@@ -108,16 +108,16 @@ export default function Auth() {
                   <Text style={styles.title}>Welcome</Text>
                   <Text style={styles.sub}>Continue as</Text>
                   <Pressable testID="role-client-btn" style={[styles.roleBtn, role === 'client' && styles.roleSel]} onPress={() => setRole('client')}>
-                    <Ionicons name="person" size={22} color={role === 'client' ? colors.brandSecondary : '#fff'} />
+                    <Ionicons name="hand-left" size={22} color={role === 'client' ? colors.brandSecondary : '#fff'} />
                     <View style={{ marginLeft: spacing.md }}>
-                      <Text style={styles.roleTitle}>Client</Text>
+                      <Text style={styles.roleTitle}>I Need Help</Text>
                       <Text style={styles.roleSub}>Find & book verified advisors</Text>
                     </View>
                   </Pressable>
                   <Pressable testID="role-advisor-btn" style={[styles.roleBtn, role === 'advisor' && styles.roleSel]} onPress={() => setRole('advisor')}>
                     <Ionicons name="briefcase" size={22} color={role === 'advisor' ? colors.brandSecondary : '#fff'} />
                     <View style={{ marginLeft: spacing.md }}>
-                      <Text style={styles.roleTitle}>Advisor</Text>
+                      <Text style={styles.roleTitle}>I'm an Advisor</Text>
                       <Text style={styles.roleSub}>Manage bookings & service tickets</Text>
                     </View>
                   </Pressable>
