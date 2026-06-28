@@ -725,6 +725,8 @@ async def buy_pack(data: BuyPackIn, user=Depends(get_user)):
     pack = next((p for p in PACKS if p["id"] == data.pack_id), None)
     if not pack:
         raise HTTPException(404, "Pack not found")
+    if user.get("wallet_balance", 0) < pack["price"]:
+        raise HTTPException(400, f"Insufficient wallet balance. Pack costs ₹{pack['price']}.")
     sub_id = new_id()
     expires_at = (datetime.now(timezone.utc) + timedelta(days=pack["validity_days"])).isoformat()
     record = {
@@ -741,11 +743,7 @@ async def buy_pack(data: BuyPackIn, user=Depends(get_user)):
         "created_at": now_iso(),
     }
     await db.contact_subscriptions.insert_one(record)
-    await db.wallet_transactions.insert_one({
-        "id": new_id(), "user_id": user["id"], "amount": -pack["price"],
-        "type": "DEBIT", "ref": sub_id, "description": f"{pack['name']} pack purchase",
-        "status": "SUCCESS", "created_at": now_iso(),
-    })
+    await adjust_wallet(user["id"], -pack["price"], "DEBIT", sub_id, f"{pack['name']} pack purchase ({pack['credits']} credits)")
     return {k: v for k, v in record.items() if k != "_id"}
 
 

@@ -9,9 +9,25 @@ Role-based mobile app (Client + Advisor) for the BrokerSaab advisory marketplace
 - Mocked Razorpay payments (instant wallet add / badge subscribe)
 
 ## Demo flow
-1. Open app → role select (Client / Advisor) → enter phone → OTP shown in UI → verify
-2. Client: Discover advisors → tap card → Book consultation (Wallet pay) or Request Quote
-3. Advisor: signs up via onboarding (auto-approved for MVP) → Dashboard → Respond to quotes / manage tickets
+1. Open app → role select (Client / Advisor) → choose login method (OTP / Password) → enter phone → verify
+2. Client: Discover advisors → tap card → Unlock contact (1 credit / FREE first) → Book consultation (Wallet pay) or Request Quote
+3. Client Profile: edit name/email/avatar (base64 image picker), set password for future logins, view wallet, buy contact packs, view unlock history
+4. Advisor: signs up via onboarding (auto-approved for MVP) → Dashboard → Respond to quotes / manage tickets
+
+## User Management features (Module 1 from BRD)
+- OTP login + Password set/login (bcrypt)
+- Profile edit (name, email, avatar base64 upload)
+- Wallet (add money, transactions, welcome bonus)
+- Contact credit packs (4 tiers: Starter/Growth/Pro/Enterprise)
+- Contact unlock (1st free, then 1 credit per advisor)
+- Unlock history
+- Active pack list with expiry
+
+## Theme
+- Navy #0B1F3A (primary)
+- Indigo #4F46E5 (interactive accent)
+- Gold #D4AF37 (premium markers)
+- White surfaces
 
 ## Seeded data
 - 28 categories (m1-m19 + open slots)
