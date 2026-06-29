@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, TextInput, ActivityIndicator, Modal } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, TextInput, ActivityIndicator, Modal, Alert, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -8,17 +8,22 @@ import { useAuth } from '@/src/auth';
 import { colors, radius, spacing } from '@/src/theme';
 import { StatusPill } from '@/src/ui';
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
 export default function TicketDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { user, refresh } = useAuth();
   const [ticket, setTicket] = useState<any>(null);
   const [comment, setComment] = useState('');
+  const [commentError, setCommentError] = useState('');
   const [addStageOpen, setAddStageOpen] = useState(false);
-  const [closeOpen, setCloseOpen] = useState(false);
   const [stageTitle, setStageTitle] = useState('');
+  const [stageDesc, setStageDesc] = useState('');
+  const [closeOpen, setCloseOpen] = useState(false);
   const [rating, setRating] = useState(5);
   const [review, setReview] = useState('');
+  const [closingComment, setClosingComment] = useState('');
 
   const load = useCallback(async () => setTicket(await api.get(`/tickets/${id}`)), [id]);
   useEffect(() => { load(); }, [load]);
@@ -29,13 +34,33 @@ export default function TicketDetail() {
 
   const addStage = async () => {
     if (!stageTitle.trim()) return;
-    await api.post(`/tickets/${id}/stages`, { title: stageTitle });
-    setStageTitle(''); setAddStageOpen(false); await load();
+    if (stageDesc.trim().length > 0 && stageDesc.trim().length < 10) {
+      Alert.alert('Description too short', 'Stage description must be at least 10 characters or left empty.');
+      return;
+    }
+    await api.post(`/tickets/${id}/stages`, { title: stageTitle, description: stageDesc.trim() || undefined });
+    setStageTitle(''); setStageDesc(''); setAddStageOpen(false); await load();
   };
   const updateStage = async (sid: string, status: string) => { await api.patch(`/tickets/${id}/stages/${sid}`, { status }); await load(); };
   const confirmStage = async (sid: string) => { await api.post(`/tickets/${id}/stages/${sid}/confirm`); await load(); };
-  const send = async () => { if (!comment.trim()) return; await api.post(`/tickets/${id}/comments`, { text: comment }); setComment(''); await load(); };
-  const close = async () => { await api.post(`/tickets/${id}/close`, { rating, review_text: review }); setCloseOpen(false); await refresh(); await load(); };
+  const send = async () => {
+    if (!comment.trim()) return;
+    if (comment.trim().length < 3) {
+      setCommentError('Comment must be at least 3 characters.');
+      return;
+    }
+    setCommentError('');
+    await api.post(`/tickets/${id}/comments`, { text: comment });
+    setComment(''); await load();
+  };
+  const close = async () => {
+    if (closingComment.trim().length > 0 && closingComment.trim().length < 10) {
+      Alert.alert('Review too short', 'Please write at least 10 characters for your review, or leave it empty.');
+      return;
+    }
+    await api.post(`/tickets/${id}/close`, { rating, review_text: closingComment.trim() || review });
+    setCloseOpen(false); setClosingComment(''); await refresh(); await load();
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.surfaceSecondary }} edges={['top']}>
@@ -93,34 +118,70 @@ export default function TicketDetail() {
       </ScrollView>
 
       {ticket.status !== 'CLOSED' && (
-        <View style={styles.commentBar}>
-          <TextInput testID="comment-input" value={comment} onChangeText={setComment} placeholder="Add a comment..." style={styles.commentInput} />
-          <Pressable testID="send-comment-btn" onPress={send} style={styles.sendBtn}><Ionicons name="send" size={18} color="#fff" /></Pressable>
+        <View>
+          {commentError !== '' && (
+            <View style={styles.commentError}>
+              <Ionicons name="alert-circle" size={12} color={colors.error} />
+              <Text style={{ fontSize: 11, color: colors.error, marginLeft: 4 }}>{commentError}</Text>
+            </View>
+          )}
+          <View style={styles.commentBar}>
+            <TextInput testID="comment-input" value={comment} onChangeText={(t) => { setComment(t); setCommentError(''); }} placeholder="Add a comment..." style={styles.commentInput} />
+            <Pressable testID="send-comment-btn" onPress={send} style={styles.sendBtn}><Ionicons name="send" size={18} color="#fff" /></Pressable>
+          </View>
         </View>
       )}
 
-      <Modal visible={addStageOpen} transparent animationType="slide">
-        <View style={styles.modalBg}><View style={styles.modalCard}>
-          <Text style={{ fontWeight: '700', fontSize: 16 }}>Add Work Stage</Text>
-          <TextInput testID="stage-title-input" value={stageTitle} onChangeText={setStageTitle} placeholder="Stage title" style={[styles.input, { marginTop: 12 }]} />
-          <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
-            <Pressable onPress={() => setAddStageOpen(false)} style={[styles.modalBtn, { backgroundColor: colors.surfaceSecondary, flex: 1 }]}><Text>Cancel</Text></Pressable>
-            <Pressable testID="confirm-add-stage" onPress={addStage} style={[styles.modalBtn, { backgroundColor: colors.brand, flex: 1 }]}><Text style={{ color: '#fff', fontWeight: '700' }}>Add</Text></Pressable>
-          </View>
+      <Modal visible={addStageOpen} transparent animationType="slide" onRequestClose={() => setAddStageOpen(false)}>
+        <View style={styles.modalBg}><View style={[styles.modalCard, { maxHeight: SCREEN_HEIGHT * 0.85 }]}>
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+            <Text style={{ fontWeight: '700', fontSize: 16 }}>Add Work Stage</Text>
+            <TextInput testID="stage-title-input" value={stageTitle} onChangeText={setStageTitle} placeholder="Stage title" style={[styles.input, { marginTop: 12 }]} />
+            <TextInput
+              value={stageDesc}
+              onChangeText={setStageDesc}
+              placeholder="Description (optional, min 10 chars if provided)"
+              multiline
+              style={[styles.input, { marginTop: 10, height: 70, textAlignVertical: 'top' }]}
+            />
+            {stageDesc.trim().length > 0 && stageDesc.trim().length < 10 && (
+              <Text style={{ fontSize: 11, color: '#F59E0B', marginTop: 4 }}>
+                {10 - stageDesc.trim().length} more character{10 - stageDesc.trim().length !== 1 ? 's' : ''} needed
+              </Text>
+            )}
+            <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
+              <Pressable onPress={() => { setAddStageOpen(false); setStageTitle(''); setStageDesc(''); }} style={[styles.modalBtn, { backgroundColor: colors.surfaceSecondary, flex: 1 }]}><Text style={{ fontWeight: '600' }}>Cancel</Text></Pressable>
+              <Pressable testID="confirm-add-stage" onPress={addStage} style={[styles.modalBtn, { backgroundColor: colors.brand, flex: 1 }]}><Text style={{ color: '#fff', fontWeight: '700' }}>Add</Text></Pressable>
+            </View>
+          </ScrollView>
         </View></View>
       </Modal>
 
-      <Modal visible={closeOpen} transparent animationType="slide">
-        <View style={styles.modalBg}><View style={styles.modalCard}>
-          <Text style={{ fontWeight: '700', fontSize: 16 }}>Rate this service</Text>
-          <View style={{ flexDirection: 'row', gap: 6, marginTop: 12 }}>
-            {[1, 2, 3, 4, 5].map(n => <Pressable testID={`star-${n}`} key={n} onPress={() => setRating(n)}><Ionicons name={n <= rating ? 'star' : 'star-outline'} size={32} color={colors.brandSecondary} /></Pressable>)}
-          </View>
-          <TextInput testID="review-input" value={review} onChangeText={setReview} placeholder="Review (optional)" multiline style={[styles.input, { marginTop: 12, height: 80, textAlignVertical: 'top' }]} />
-          <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
-            <Pressable onPress={() => setCloseOpen(false)} style={[styles.modalBtn, { backgroundColor: colors.surfaceSecondary, flex: 1 }]}><Text>Cancel</Text></Pressable>
-            <Pressable testID="confirm-close-btn" onPress={close} style={[styles.modalBtn, { backgroundColor: colors.brand, flex: 1 }]}><Text style={{ color: '#fff', fontWeight: '700' }}>Release Payment</Text></Pressable>
-          </View>
+      <Modal visible={closeOpen} transparent animationType="slide" onRequestClose={() => setCloseOpen(false)}>
+        <View style={styles.modalBg}><View style={[styles.modalCard, { maxHeight: SCREEN_HEIGHT * 0.85 }]}>
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+            <Text style={{ fontWeight: '700', fontSize: 16 }}>Rate this service</Text>
+            <View style={{ flexDirection: 'row', gap: 6, marginTop: 12, justifyContent: 'center' }}>
+              {[1, 2, 3, 4, 5].map(n => <Pressable testID={`star-${n}`} key={n} onPress={() => setRating(n)}><Ionicons name={n <= rating ? 'star' : 'star-outline'} size={28} color={colors.brandSecondary} /></Pressable>)}
+            </View>
+            <TextInput
+              testID="review-input"
+              value={closingComment}
+              onChangeText={setClosingComment}
+              placeholder="Review (optional, min 10 chars if provided)"
+              multiline
+              style={[styles.input, { marginTop: 12, height: 70, textAlignVertical: 'top' }]}
+            />
+            {closingComment.trim().length > 0 && closingComment.trim().length < 10 && (
+              <Text style={{ fontSize: 11, color: '#F59E0B', marginTop: 4 }}>
+                {10 - closingComment.trim().length} more character{10 - closingComment.trim().length !== 1 ? 's' : ''} needed
+              </Text>
+            )}
+            <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
+              <Pressable onPress={() => { setCloseOpen(false); setClosingComment(''); }} style={[styles.modalBtn, { backgroundColor: colors.surfaceSecondary, flex: 1 }]}><Text style={{ fontWeight: '600' }}>Cancel</Text></Pressable>
+              <Pressable testID="confirm-close-btn" onPress={close} style={[styles.modalBtn, { backgroundColor: colors.brand, flex: 1 }]}><Text style={{ color: '#fff', fontWeight: '700' }}>Release Payment</Text></Pressable>
+            </View>
+          </ScrollView>
         </View></View>
       </Modal>
     </SafeAreaView>
@@ -145,6 +206,7 @@ const styles = StyleSheet.create({
   commentAuthor: { fontSize: 10, color: colors.textMuted, fontWeight: '700' },
   commentText: { fontSize: 13, color: colors.onSurface, marginTop: 2 },
   closeBtn: { backgroundColor: colors.success, padding: 14, borderRadius: radius.md, alignItems: 'center', marginTop: spacing.lg },
+  commentError: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, paddingVertical: 6, backgroundColor: '#FEE2E2' },
   commentBar: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', padding: spacing.md, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.divider, gap: 8 },
   commentInput: { flex: 1, borderWidth: 1, borderColor: colors.border, borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 10 },
   sendBtn: { backgroundColor: colors.brand, width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center' },

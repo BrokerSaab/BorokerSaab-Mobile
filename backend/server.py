@@ -140,6 +140,17 @@ class CloseTicketIn(BaseModel):
     review_text: Optional[str] = ""
 
 
+class SupportTicketIn(BaseModel):
+    subject: str
+    description: str
+    category: Literal["GENERAL", "BILLING", "TECHNICAL", "BOOKING_ISSUE", "ADVISOR_ISSUE", "OTHER"] = "GENERAL"
+    priority: Literal["LOW", "MEDIUM", "HIGH", "URGENT"] = "MEDIUM"
+
+
+class SupportTicketCommentIn(BaseModel):
+    comment: str
+
+
 class WalletAddIn(BaseModel):
     amount: float
 
@@ -686,6 +697,60 @@ async def close_ticket(ticket_id: str, data: CloseTicketIn, user=Depends(get_use
             {"$set": {"advisor.rating": new_r, "advisor.reviews_count": new_n}},
         )
     return await db.tickets.find_one({"id": ticket_id}, PROJ)
+
+
+# ---------- Support Tickets ----------
+@api.post("/support/tickets")
+async def create_support_ticket(data: SupportTicketIn, user=Depends(get_user)):
+    if len(data.subject.strip()) < 3:
+        raise HTTPException(400, "Subject must be at least 3 characters.")
+    if len(data.description.strip()) < 10:
+        raise HTTPException(400, "Description must be at least 10 characters. Please provide more details.")
+    count = await db.support_tickets.count_documents({})
+    ticket_number = f"BS-TKT-{count + 1:06d}"
+    ticket = {
+        "id": new_id(),
+        "ticket_number": ticket_number,
+        "user_id": user["id"],
+        "user_name": user.get("full_name", "User"),
+        "user_phone": user.get("phone", ""),
+        "subject": data.subject.strip(),
+        "description": data.description.strip(),
+        "category": data.category,
+        "priority": data.priority,
+        "status": "OPEN",
+        "closing_notes": None,
+        "resolved_at": None,
+        "closed_at": None,
+        "attachments": [],
+        "activities": [
+            {
+                "action": "STATUS_CHANGED",
+                "to_status": "OPEN",
+                "note": "Ticket raised",
+                "performed_by_name": user.get("full_name", "User"),
+                "performed_by_role": user.get("role", "client").upper(),
+                "created_at": now_iso(),
+            }
+        ],
+        "created_at": now_iso(),
+    }
+    await db.support_tickets.insert_one(ticket)
+    return {k: v for k, v in ticket.items() if k != "_id"}
+
+
+@api.get("/support/tickets")
+async def list_support_tickets(user=Depends(get_user)):
+    cur = db.support_tickets.find({"user_id": user["id"]}, PROJ).sort("created_at", -1)
+    return await cur.to_list(100)
+
+
+@api.get("/support/tickets/{ticket_id}")
+async def support_ticket_detail(ticket_id: str, user=Depends(get_user)):
+    t = await db.support_tickets.find_one({"id": ticket_id, "user_id": user["id"]}, PROJ)
+    if not t:
+        raise HTTPException(404, "Ticket not found")
+    return t
 
 
 # ---------- Wallet ----------
